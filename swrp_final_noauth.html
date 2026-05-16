@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#000;color:#fff;font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;position:relative;}
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:64px 64px;pointer-events:none;z-index:0;}
+.scanlines{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px);pointer-events:none;z-index:1;}
+.wrap{position:relative;z-index:2;}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;border-bottom:1px solid rgba(255,255,255,0.18);background:rgba(0,0,0,0.97);position:sticky;top:0;z-index:50;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:0.08em;white-space:nowrap;}
+.logo-svg{width:30px;height:30px;animation:spin 20s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.nav-badge{display:flex;align-items:center;gap:7px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.22em;color:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.14);padding:5px 14px;}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+
+/* HERO */
+.hero{text-align:center;padding:3.5rem 3rem 2.5rem;}
+.hero-tag{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.38em;color:rgba(255,255,255,0.38);margin-bottom:14px;}
+.hero-line{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);margin:14px auto;max-width:800px;}
+.hero-title{font-family:'Orbitron',monospace;font-size:clamp(28px,3.5vw,46px);font-weight:900;letter-spacing:0.1em;line-height:1.1;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.4);margin-top:8px;}
+
+/* TICKER */
+.ticker-wrap{overflow:hidden;border-top:1px solid rgba(255,255,255,0.1);border-bottom:1px solid rgba(255,255,255,0.1);padding:9px 0;background:rgba(255,255,255,0.015);margin-bottom:3rem;}
+.ticker{display:flex;gap:2.5rem;white-space:nowrap;animation:ticker 28s linear infinite;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.22em;color:rgba(255,255,255,0.38);}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tsep{color:rgba(255,255,255,0.18);}
+
+/* SECTION */
+.sect{padding:0 3rem;max-width:1400px;margin:0 auto;}
+.sect-head{display:flex;align-items:center;gap:1.25rem;margin-bottom:1.75rem;}
+.sect-line{flex:1;height:1px;background:rgba(255,255,255,0.1);}
+.sect-title{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:0.42em;color:rgba(255,255,255,0.38);white-space:nowrap;}
+
+/* GRID */
+.dept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:2rem;}
+
+/* CARDS */
+.card{border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.02);padding:2rem 1.75rem;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;transition:all 0.3s ease;min-height:220px;}
+.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;transition:height 0.35s ease;}
+.card:hover::before{height:100%;}
+.card-open::before{background:#4ade80;}
+.card-maintenance::before{background:#fb923c;}
+.card-closed::before{background:#f87171;}
+.card-open{cursor:pointer;}
+.card-open:hover{border-color:rgba(74,222,128,0.45);background:rgba(74,222,128,0.04);transform:translateY(-2px);}
+.card-maintenance:hover{border-color:rgba(251,146,60,0.35);background:rgba(251,146,60,0.03);}
+.card-closed:hover{border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.03);}
+.card-head{display:flex;align-items:flex-start;gap:12px;}
+.card-icon{font-size:26px;line-height:1;filter:grayscale(1) brightness(1.8);flex-shrink:0;margin-top:1px;}
+.card-name{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:0.06em;line-height:1.35;}
+.card-desc{font-size:13px;color:rgba(255,255,255,0.42);line-height:1.6;flex:1;}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
+.card-cta{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.18em;color:#4ade80;opacity:0;transform:translateX(-8px);transition:all 0.3s;}
+.card-open:hover .card-cta{opacity:1;transform:translateX(0);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.2em;padding:5px 12px;border:1px solid;border-radius:2px;}
+.bdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.badge-open{color:#4ade80;border-color:rgba(74,222,128,0.5);background:rgba(74,222,128,0.07);}
+.badge-open .bdot{background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,0.7);animation:pg 1.5s ease infinite;}
+@keyframes pg{0%,100%{opacity:1;box-shadow:0 0 8px rgba(74,222,128,.7)}50%{opacity:.5;box-shadow:0 0 3px rgba(74,222,128,.3)}}
+.badge-maintenance{color:#fb923c;border-color:rgba(251,146,60,0.5);background:rgba(251,146,60,0.07);}
+.badge-maintenance .bdot{background:#fb923c;box-shadow:0 0 7px rgba(251,146,60,0.6);animation:blink 1s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.badge-closed{color:#f87171;border-color:rgba(248,113,113,0.4);background:rgba(248,113,113,0.06);}
+.badge-closed .bdot{background:#f87171;box-shadow:0 0 6px rgba(248,113,113,0.5);}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;padding:16px 2rem;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.01);max-width:1340px;margin:0 auto 3rem;}
+.leg-item{display:flex;align-items:center;gap:10px;}
+.leg-txt{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.32);letter-spacing:0.1em;}
+
+/* FOOTER */
+.footer{border-top:1px solid rgba(255,255,255,0.1);padding:18px 3rem;display:flex;align-items:center;justify-content:center;gap:12px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.16em;color:rgba(255,255,255,0.2);}
+.fsep{opacity:0.3;}
+</style>
+<body>
+<div class="bg-grid"></div>
+<div class="scanlines"></div>
+<div class="wrap">
+
+  <nav class="nav">
+    <div class="nav-logo">
+      <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="2.2"/>
+        <circle cx="50" cy="50" r="34" fill="none" stroke="#fff" stroke-width="1"/>
+        <circle cx="50" cy="50" r="9" fill="#fff"/>
+        <line x1="50" y1="5" x2="50" y2="95" stroke="#fff" stroke-width="1.5"/>
+        <line x1="5" y1="50" x2="95" y2="50" stroke="#fff" stroke-width="1.5"/>
+        <line x1="18" y1="18" x2="82" y2="82" stroke="#fff" stroke-width="0.9"/>
+        <line x1="82" y1="18" x2="18" y2="82" stroke="#fff" stroke-width="0.9"/>
+      </svg>
+      ⚡ SWRP・Grogu Pixar
+    </div>
+    <div class="nav-badge"><span class="pulse-dot"></span>PLATEFORME DE RECRUTEMENT</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.18em;color:rgba(255,255,255,0.25);">© 2026 SWRP・GROGU PIXAR</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-tag">SYSTÈME DE RECRUTEMENT — STATUTS EN TEMPS RÉEL</div>
+    <div class="hero-line"></div>
+    <div class="hero-title">STATUT DES RECRUTEMENTS</div>
+    <div class="hero-line"></div>
+    <div class="hero-sub">Consulte les départements ouverts et soumets ta candidature.</div>
+  </div>
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>⚡ SWRP・Grogu Pixar</span><span class="tsep">◆</span>
+      <span>SYSTÈME DE RECRUTEMENT ACTIF</span><span class="tsep">◆</span>
+      <span>LES CANDIDATURES OUVERTES SONT CLIQUABLES</span><span class="tsep">◆</span>
+      <span>REMPLISSEZ LE FORMULAIRE AVEC SOIN</span><span class="tsep">◆</span>
+      <span>MAY THE FORCE BE WITH YOU</span><span class="tsep">◆</span>
+      <span>⚡ SWRP・Grogu Pixar</span><span class="tsep">◆</span>
+      <span>SYSTÈME DE RECRUTEMENT ACTIF</span><span class="tsep">◆</span>
+      <span>LES CANDIDATURES OUVERTES SONT CLIQUABLES</span><span class="tsep">◆</span>
+      <span>REMPLISSEZ LE FORMULAIRE AVEC SOIN</span><span class="tsep">◆</span>
+      <span>MAY THE FORCE BE WITH YOU</span><span class="tsep">◆</span>
+    </div>
+  </div>
+
+  <div class="sect">
+    <div class="sect-head">
+      <span class="sect-line"></span>
+      <span class="sect-title">DÉPARTEMENTS</span>
+      <span class="sect-line"></span>
+    </div>
+    <div class="dept-grid">
+
+      <div class="card card-maintenance">
+        <div class="card-head">
+          <span class="card-icon">⚖</span>
+          <span class="card-name">DÉPARTEMENT<br>MODÉRATION</span>
+        </div>
+        <div class="card-desc">Veille au respect des règles et à la sécurité du serveur.</div>
+        <div class="card-foot">
+          <span class="badge badge-maintenance"><span class="bdot"></span>MAINTENANCE</span>
+        </div>
+      </div>
+
+      <div class="card card-open" onclick="window.open('https://forms.google.com/LIEN_LORE','_blank')">
+        <div class="card-head">
+          <span class="card-icon">📜</span>
+          <span class="card-name">DÉPARTEMENT<br>LORE</span>
+        </div>
+        <div class="card-desc">Construit et maintient l'univers narratif du serveur.</div>
+        <div class="card-foot">
+          <span class="badge badge-open"><span class="bdot"></span>OUVERT</span>
+          <span class="card-cta">Postuler →</span>
+        </div>
+      </div>
+
+      <div class="card card-closed">
+        <div class="card-head">
+          <span class="card-icon">⚙</span>
+          <span class="card-name">DÉPARTEMENT<br>DÉVELOPPEUR</span>
+        </div>
+        <div class="card-desc">Développe et maintient les outils et bots du serveur.</div>
+        <div class="card-foot">
+          <span class="badge badge-closed"><span class="bdot"></span>FERMÉ</span>
+        </div>
+      </div>
+
+      <div class="card card-open" onclick="window.open('https://forms.google.com/LIEN_ANIMATEUR','_blank')">
+        <div class="card-head">
+          <span class="card-icon">🎬</span>
+          <span class="card-name">DÉPARTEMENT<br>ANIMATEUR</span>
+        </div>
+        <div class="card-desc">Organise et anime les événements du serveur.</div>
+        <div class="card-foot">
+          <span class="badge badge-open"><span class="bdot"></span>OUVERT</span>
+          <span class="card-cta">Postuler →</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><span class="badge badge-open"><span class="bdot"></span>OUVERT</span><span class="leg-txt">Candidatures acceptées — cliquer pour postuler</span></div>
+    <div class="leg-item"><span class="badge badge-maintenance"><span class="bdot"></span>MAINTENANCE</span><span class="leg-txt">Temporairement indisponible</span></div>
+    <div class="leg-item"><span class="badge badge-closed"><span class="bdot"></span>FERMÉ</span><span class="leg-txt">Recrutement suspendu</span></div>
+  </div>
+
+  <footer class="footer">
+    <span>© 2026 ⚡ SWRP・Grogu Pixar</span>
+    <span class="fsep">|</span>
+    <span>TOUS DROITS RÉSERVÉS</span>
+    <span class="fsep">|</span>
+    <span>SYSTÈME SÉCURISÉ v2.0</span>
+  </footer>
+
+</div>
+</body>
+</html>
